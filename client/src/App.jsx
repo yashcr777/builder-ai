@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import  { AuthLayout, GuestLayout } from './pages/Layout'
 import AuthPage from './pages/AuthPage'
 import HomePage from './pages/HomePage'
@@ -9,16 +9,17 @@ const App = () => {
   return (
     <Routes>
       <Route element={<GuestLayout/>}>
-        <Route path ='/login' element={<AuthPage mode="login"/>}></Route>
-        <Route path='/register' element={<AuthPage mode="register"/>}></Route>
+        <Route path ='/login' element={<AuthPage mode="login"/>}/>
+        <Route path='/register' element={<AuthPage mode="register"/>}/>
       </Route>
 
       <Route element={<AuthLayout/>}>
-        <Route path ='/' element={<HomePage/>}></Route>
+        <Route path ='/' element={<HomePage/>}/>
         <Route path='/builder/:id' element={<BuilderPage/>}/>
         <Route path='/preview/:id' element={<PreviewPage/>}/>
-
       </Route>
+
+      <Route path='*' element={<Navigate to="/" replace />}/>
     </Routes>
   )
 }
