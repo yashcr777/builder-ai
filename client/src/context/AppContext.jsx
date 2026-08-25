@@ -98,7 +98,7 @@ export function AppContextProvider({children}){
       }
 
       const loadProject =  async (id, silent = false)=>{
-        console.log("load project");
+        // console.log("load project");
         
         if(!user) return;
         if (!silent) setLoadingActiveProject(true)
