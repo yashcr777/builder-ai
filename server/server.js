@@ -8,24 +8,41 @@ import projectRouter from "./routes/projectRoutes.js";
 
 const app = express();
 
-await connectToDatabase()
+await connectToDatabase();
 
-app.use(cors({origin: process.env.ORIGINS.split(","), credentials: true}))
-app.use(cookieParser())
-app.use(express.json())
+const allowedOrigins = process.env.ORIGINS
+  .split(",")
+  .map((origin) => origin.trim());
 
-app.get("/", (req, res)=> res.send("Server is Live!"))
-app.use('/api/auth', authRouter)
-app.use("/api/projects", projectRouter)
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS not allowed for origin: ${origin}`));
+      }
+    },
+    credentials: true,
+  })
+);
 
-// Centralized error handler 
-app.use((err, _req, res, _next)=>{
-    console.error(`[Error] ${err.message}`);
-    res.status(500).json({error: err.message})
-})
+app.use(cookieParser());
+app.use(express.json());
+
+app.get("/", (req, res) => res.send("Server is Live!"));
+
+app.use("/api/auth", authRouter);
+app.use("/api/projects", projectRouter);
+
+// Centralized error handler
+app.use((err, _req, res, _next) => {
+  console.error(`[Error] ${err.message}`);
+  res.status(500).json({ error: err.message });
+});
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, ()=>{
-    console.log(`Server is running at http://localhost:${port}`)
-})
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+});
